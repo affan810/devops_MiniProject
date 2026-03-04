@@ -21,16 +21,18 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        sstage('Build and Push Docker Image') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:latest ."
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
+                // This wrapper ensures Jenkins logs in BEFORE doing anything else
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                    
+                    // 1. Log in to Docker Hub using your token
                     sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
+                    
+                    // 2. Build the image (It will now successfully pull the Python base image)
+                    sh "docker build -t ${DOCKER_IMAGE}:latest ."
+                    
+                    // 3. Push the newly built image to your repository
                     sh "docker push ${DOCKER_IMAGE}:latest"
                 }
             }
