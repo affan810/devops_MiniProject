@@ -1,0 +1,23 @@
+---
+- name: Deploy Calculator Application
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Create a dedicated directory for ELK logs on the host
+      file:
+        path: "{{ ansible_env.HOME }}/calculator_logs"
+        state: directory
+        mode: '0755'
+
+    - name: Create an empty log file to mount into the container
+      copy:
+        content: ""
+        dest: "{{ ansible_env.HOME }}/calculator_logs/calculator.log"
+        force: no
+
+    - name: Pull the latest Docker image from Docker Hub
+      command: docker pull affan810/mt2025016_spe:latest
+
+    - name: Deployment Success Message
+      debug:
+        msg: "Deployment complete! The image is pulled and the log directory is ready."
