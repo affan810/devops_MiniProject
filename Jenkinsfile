@@ -21,7 +21,7 @@ pipeline {
             }
         }
 
-        sstage('Build and Push Docker Image') {
+        stage('Build and Push Docker Image') {
             steps {
                 // This wrapper ensures Jenkins logs in BEFORE doing anything else
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
